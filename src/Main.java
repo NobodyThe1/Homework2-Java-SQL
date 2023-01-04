@@ -13,6 +13,9 @@ public class Main {
        public static void main(String[] args) {
 
        IDBExecutor dbExecutor = new MySQLExecutor();
+
+       try {
+
           Student student1 = new Student(1, "Иванов Иван", 'm', 1);
           Student student2 = new Student(2, "Петров Пётр", 'm', 2);
           Student student3 = new Student(3, "Кольцова Мария", 'f', 3);
@@ -29,7 +32,6 @@ public class Main {
           Student student14 = new Student(14, "Лаврентьев Геннадий", 'm', 2);
           Student student15 = new Student(15, "Алексеева Евгения", 'f', 3);
 
-          try {
                StudentTable studentTable = new StudentTable(dbExecutor);
 
                List<String> columnsStudentTable = new ArrayList<>();
@@ -62,15 +64,11 @@ public class Main {
                studentTable.insert(studentColumns, student14);
                studentTable.insert(studentColumns, student15);
 
-           } finally {
-               dbExecutor.close();
-           }
 
           Group group1 = new Group(1, "First", 1);
           Group group2 = new Group(2, "Second", 2);
           Group group3 = new Group(3, "Third", 3);
 
-           try {
                GroupTable groupTable = new GroupTable(dbExecutor);
                List<String> columnsGroupTable = new ArrayList<>();
                columnsGroupTable.add("id int primary key");
@@ -87,16 +85,12 @@ public class Main {
                groupTable.insert(groupColumns, group2);
                groupTable.insert(groupColumns, group3);
 
-           } finally {
-               dbExecutor.close();
-           }
 
           Curator curator1 = new Curator(1, "Гаврилов Н.И.");
           Curator curator2 = new Curator(2, "Шевченко Е.А.");
           Curator curator3 = new Curator(3, "Поляков И.А");
           Curator curator4 = new Curator(4, "Андреева Н.В.");
 
-           try {
                CuratorTable curatorTable = new CuratorTable(dbExecutor);
                List<String> columnsCuratorTable = new ArrayList<>();
                columnsCuratorTable.add("id int primary key");
@@ -111,6 +105,15 @@ public class Main {
                curatorTable.insert(curatorColumns, curator2);
                curatorTable.insert(curatorColumns, curator3);
                curatorTable.insert(curatorColumns, curator4);
+
+
+          studentTable.count("id");
+          studentTable.selectFromTable("name", "sex", "f");
+          groupTable.update("curatorId", 4, "id", 1);
+          groupTable.joinTwoTables("curator", "curatorId", "id");
+          studentTable.joinThreeTables("group_students", "curator", "id", "name", "sex", "groupId", "curatorId");
+          studentTable.nestedQuery("name", "groupId", "group_students", "id", "name", "First");
+
 
            } finally {
                dbExecutor.close();
